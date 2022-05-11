@@ -221,7 +221,7 @@ void ListWidget::subscribeToSession(
 }
 
 void ListWidget::setupSelectRestriction() {
-	_provider->hasSelectRestrictionChanges(
+	/* _provider->hasSelectRestrictionChanges(
 	) | rpl::filter([=] {
 		return _provider->hasSelectRestriction() && hasSelectedItems();
 	}) | rpl::start_with_next([=] {
@@ -229,7 +229,7 @@ void ListWidget::setupSelectRestriction() {
 		if (_mouseAction == MouseAction::PrepareSelect) {
 			mouseActionCancel();
 		}
-	}, lifetime());
+	}, lifetime()); */
 }
 
 rpl::producer<int> ListWidget::scrollToRequests() const {
@@ -854,9 +854,10 @@ void ListWidget::showContextMenu(
 		});
 	};
 	auto canForwardAll = [&] {
-		return ranges::none_of(_selected, [](auto &&item) {
-			return !item.second.canForward;
-		});
+		return true;
+		// return ranges::none_of(_selected, [](auto &&item) {
+		// 	return !item.second.canForward;
+		// });
 	};
 
 	auto link = ClickHandler::getActive();
@@ -1007,7 +1008,7 @@ void ListWidget::showContextMenu(
 				}
 			}
 		}
-		if (!_provider->hasSelectRestriction()) {
+		if (!_provider->hasSelectRestriction() || true) {
 			_contextMenu->addAction(
 				tr::lng_context_select_msg(tr::now),
 				crl::guard(this, [=] {
@@ -1424,7 +1425,7 @@ void ListWidget::updateDragSelection() {
 	}
 	if (!fromState.item
 		|| !tillState.item
-		|| _provider->hasSelectRestriction()) {
+		|| /* _provider->hasSelectRestriction() */ false) {
 		clearDragSelection();
 		return;
 	}
@@ -1546,13 +1547,13 @@ void ListWidget::mouseActionStart(
 							applyItemSelection(_pressState.item, selStatus);
 							_mouseAction = MouseAction::Selecting;
 							repaintItem(pressLayout);
-						} else if (!_provider->hasSelectRestriction()) {
+						} else if (!_provider->hasSelectRestriction() || true) {
 							_mouseAction = MouseAction::PrepareSelect;
 						}
 					}
 				}
 			} else if (!_pressWasInactive
-				&& !_provider->hasSelectRestriction()) {
+				&& /* !_provider->hasSelectRestriction() */ true) {
 				_mouseAction = MouseAction::PrepareSelect; // start items select
 			}
 		}
@@ -1729,7 +1730,7 @@ void ListWidget::mouseActionFinish(
 }
 
 void ListWidget::applyDragSelection() {
-	if (!_provider->hasSelectRestriction()) {
+	if (!_provider->hasSelectRestriction() || true) {
 		applyDragSelection(_selected);
 	}
 	clearDragSelection();

@@ -141,7 +141,7 @@ void AddPhotoActions(
 		HistoryItem *item,
 		not_null<ListWidget*> list) {
 	const auto contextId = item ? item->fullId() : FullMsgId();
-	if (!list->hasCopyRestriction(item)) {
+	if (!list->hasCopyRestriction(item) || true) {
 		menu->addAction(
 			tr::lng_context_save_image(tr::now),
 			App::LambdaDelayed(
@@ -205,7 +205,7 @@ void AddSaveDocumentAction(
 		HistoryItem *item,
 		not_null<DocumentData*> document,
 		not_null<ListWidget*> list) {
-	if (list->hasCopyRestriction(item)) {
+	if (list->hasCopyRestriction(item) && false) {
 		return;
 	}
 	const auto origin = item ? item->fullId() : FullMsgId();
@@ -256,6 +256,7 @@ void AddDocumentActions(
 				OpenGif(list->controller(), contextId);
 			}, &st::menuIconShowInChat);
 		}
+		// not enabled since telegram could track
 		if (!list->hasCopyRestriction(item)) {
 			menu->addAction(tr::lng_context_save_gif(tr::now), [=] {
 				SaveGif(list->controller(), contextId);
@@ -296,6 +297,7 @@ void AddDocumentActions(
 			std::move(callback),
 			&st::menuIconStickers);
 	}
+	// not enabled since telegram could track
 	if (item && !list->hasCopyRestriction(item)) {
 		const auto controller = list->controller();
 		AddSaveSoundForNotifications(menu, item, document, controller);
@@ -343,7 +345,7 @@ bool AddForwardSelectedAction(
 	if (!request.overSelection || request.selectedItems.empty()) {
 		return false;
 	}
-	if (!ranges::all_of(request.selectedItems, &SelectedItem::canForward)) {
+	if (!ranges::all_of(request.selectedItems, &SelectedItem::canForward) && false) {
 		return false;
 	}
 
@@ -405,7 +407,7 @@ bool AddForwardMessageAction(
 	const auto item = request.item;
 	if (!request.selectedItems.empty()) {
 		return false;
-	} else if (!item || !item->allowsForward()) {
+	} else if (!item || /* !item->allowsForward() */ false) {
 		return false;
 	}
 	const auto owner = &item->history()->owner();
@@ -413,7 +415,7 @@ bool AddForwardMessageAction(
 	if (asGroup) {
 		if (const auto group = owner->groups().find(item)) {
 			if (!ranges::all_of(group->items, &HistoryItem::allowsForward)) {
-				return false;
+				// return false;
 			}
 		}
 	}
@@ -889,7 +891,7 @@ bool AddSelectMessageAction(
 	} else if (!item
 		|| item->isLocal()
 		|| item->isService()
-		|| list->hasSelectRestriction()) {
+		|| /* list->hasSelectRestriction() */ false) {
 		return false;
 	}
 	const auto owner = &item->history()->owner();
@@ -990,12 +992,12 @@ base::unique_qptr<Ui::PopupMenu> FillContextMenu(
 		list,
 		hasWhoReactedItem ? st::whoReadMenu : st::popupMenuWithIcons);
 
-	if (request.overSelection && !list->hasCopyRestrictionForSelected()) {
+	if (request.overSelection && /* !list->hasCopyRestrictionForSelected() */ true) {
 		const auto text = request.selectedItems.empty()
 			? tr::lng_context_copy_selected(tr::now)
 			: tr::lng_context_copy_selected_items(tr::now);
 		result->addAction(text, [=] {
-			if (!list->showCopyRestrictionForSelected()) {
+			if (!list->showCopyRestrictionForSelected() || true) {
 				TextUtilities::SetClipboardText(list->getSelectedText());
 			}
 		}, &st::menuIconCopy);
@@ -1018,11 +1020,11 @@ base::unique_qptr<Ui::PopupMenu> FillContextMenu(
 		}
 		if (!link
 			&& (view->hasVisibleText() || mediaHasTextForCopy)
-			&& !list->hasCopyRestriction(view->data())) {
+			&& /* !list->hasCopyRestriction(view->data()) */ true) {
 			const auto asGroup = (request.pointState != PointState::GroupPart);
 			result->addAction(tr::lng_context_copy_text(tr::now), [=] {
 				if (const auto item = owner->message(itemId)) {
-					if (!list->showCopyRestriction(item)) {
+					if (/* !list->showCopyRestriction(item) */ true) {
 						if (asGroup) {
 							if (const auto group = owner->groups().find(item)) {
 								TextUtilities::SetClipboardText(HistoryGroupText(group));

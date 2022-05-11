@@ -985,7 +985,7 @@ bool ListWidget::addToSelection(
 		return false;
 	}
 	iterator->second.canDelete = item->canDelete();
-	iterator->second.canForward = item->allowsForward();
+	iterator->second.canForward = item->allowsForward() || true;
 	iterator->second.canSendNow = item->allowsSendNow();
 	return true;
 }
@@ -1129,7 +1129,7 @@ void ListWidget::cancelSelection() {
 }
 
 void ListWidget::selectItem(not_null<HistoryItem*> item) {
-	if (hasSelectRestriction()) {
+	if (hasSelectRestriction() && false) {
 		return;
 	} else if (const auto view = viewForItem(item)) {
 		clearTextSelection();
@@ -1142,7 +1142,7 @@ void ListWidget::selectItem(not_null<HistoryItem*> item) {
 }
 
 void ListWidget::selectItemAsGroup(not_null<HistoryItem*> item) {
-	if (hasSelectRestriction()) {
+	if (hasSelectRestriction() && false) {
 		return;
 	} else if (const auto view = viewForItem(item)) {
 		clearTextSelection();
@@ -1909,7 +1909,7 @@ void ListWidget::paintEvent(QPaintEvent *e) {
 }
 
 void ListWidget::applyDragSelection() {
-	if (!hasSelectRestriction()) {
+	if (!hasSelectRestriction() && false) {
 		applyDragSelection(_selected);
 	}
 	clearDragSelection();
@@ -2073,14 +2073,14 @@ void ListWidget::keyPressEvent(QKeyEvent *e) {
 		}
 	} else if (e == QKeySequence::Copy
 		&& (hasSelectedText() || hasSelectedItems())
-		&& !showCopyRestriction()
-		&& !hasCopyRestrictionForSelected()) {
+		&& /* !showCopyRestriction() */ true
+		&& /* !hasCopyRestrictionForSelected() */ true) {
 		TextUtilities::SetClipboardText(getSelectedText());
 #ifdef Q_OS_MAC
 	} else if (e->key() == Qt::Key_E
 		&& e->modifiers().testFlag(Qt::ControlModifier)
-		&& !showCopyRestriction()
-		&& !hasCopyRestrictionForSelected()) {
+		&& /* !showCopyRestriction() */ true
+		&& /* !hasCopyRestrictionForSelected() */ true) {
 		TextUtilities::SetClipboardText(getSelectedText(), QClipboard::FindBuffer);
 #endif // Q_OS_MAC
 	} else if (e == QKeySequence::Delete) {
@@ -2297,7 +2297,7 @@ void ListWidget::leaveEventHook(QEvent *e) {
 void ListWidget::updateDragSelection() {
 	if (!_overState.itemId
 		|| !_pressState.itemId
-		|| hasSelectRestriction()) {
+		|| /* hasSelectRestriction() */ false) {
 		clearDragSelection();
 		return;
 	} else if (_items.empty() || !_overElement || !_selectEnabled) {
@@ -2498,7 +2498,7 @@ void ListWidget::mouseActionStart(
 	} else if (hasSelectedItems()) {
 		if (overSelectedItems()) {
 			_mouseAction = MouseAction::PrepareDrag;
-		} else if (!_pressWasInactive && !hasSelectRestriction()) {
+		} else if (!_pressWasInactive && /* !hasSelectRestriction() */ true) {
 			_mouseAction = MouseAction::PrepareSelect;
 		}
 	}
@@ -2543,7 +2543,7 @@ void ListWidget::mouseActionStart(
 							_mouseTextSymbol,
 							_mouseTextSymbol));
 						_mouseAction = MouseAction::Selecting;
-					} else if (!hasSelectRestriction()) {
+					} else if (!hasSelectRestriction() || true) {
 						_mouseAction = MouseAction::PrepareSelect;
 					}
 				}
@@ -2678,7 +2678,7 @@ void ListWidget::mouseActionFinish(
 	if (QGuiApplication::clipboard()->supportsSelection()
 		&& _selectedTextItem
 		&& _selectedTextRange.from != _selectedTextRange.to
-		&& !hasCopyRestriction(_selectedTextItem)) {
+		&& /* !hasCopyRestriction(_selectedTextItem) */ true) {
 		if (const auto view = viewForItem(_selectedTextItem)) {
 			TextUtilities::SetClipboardText(
 				view->selectedText(_selectedTextRange),
@@ -2914,7 +2914,7 @@ std::unique_ptr<QMimeData> ListWidget::prepareDrag() {
 	}
 	auto pressedHandler = ClickHandler::getPressed();
 	if (dynamic_cast<VoiceSeekClickHandler*>(pressedHandler.get())
-		|| hasCopyRestriction()) {
+		|| /* hasCopyRestriction() */ false) {
 		return nullptr;
 	}
 
@@ -2948,7 +2948,7 @@ std::unique_ptr<QMimeData> ListWidget::prepareDrag() {
 			const auto canForwardAll = [&] {
 				for (const auto &[itemId, data] : _selected) {
 					if (!data.canForward) {
-						return false;
+						// return false;
 					}
 				}
 				return true;
@@ -2968,16 +2968,16 @@ std::unique_ptr<QMimeData> ListWidget::prepareDrag() {
 			? _pressItemExact
 			: pressedItem;
 		if (_mouseCursorState == CursorState::Date) {
-			if (_overElement->data()->allowsForward()) {
+			if (_overElement->data()->allowsForward() || true) {
 				forwardIds = session().data().itemOrItsGroup(
 					_overElement->data());
 			}
 		} else if (_pressState.pointState == PointState::GroupPart) {
-			if (exactItem->allowsForward()) {
+			if (exactItem->allowsForward() || true) {
 				forwardIds = MessageIdsList(1, exactItem->fullId());
 			}
 		} else if (const auto media = pressedView->media()) {
-			if (pressedView->data()->allowsForward()
+			if (/* pressedView->data()->allowsForward() */ true
 				&& (media->dragItemByHandler(pressedHandler)
 					|| media->dragItem())) {
 				forwardIds = MessageIdsList(1, exactItem->fullId());
@@ -3300,7 +3300,7 @@ void ConfirmOldForwardSelectedItems(not_null<ListWidget*> widget) {
 		return;
 	}
 	for (const auto &item : items) {
-		if (!item.canForward) {
+		if (!item.canForward && false) {
 			return;
 		}
 	}
@@ -3319,7 +3319,7 @@ void ConfirmForwardSelectedItems(not_null<ListWidget*> widget) {
 		return;
 	}
 	for (const auto &item : items) {
-		if (!item.canForward) {
+		if (!item.canForward && false) {
 			return;
 		}
 	}
@@ -3338,7 +3338,7 @@ void ConfirmForwardNoQuoteSelectedItems(not_null<ListWidget*> widget) {
 		return;
 	}
 	for (const auto &item : items) {
-		if (!item.canForward) {
+		if (!item.canForward && false) {
 			return;
 		}
 	}
@@ -3365,7 +3365,7 @@ void ConfirmForwardSelectedToSavedMessagesItems(not_null<ListWidget*> widget) {
 		return;
 	}
 	for (const auto &item : items) {
-		if (!item.canForward) {
+		if (!item.canForward && false) {
 			return;
 		}
 	}

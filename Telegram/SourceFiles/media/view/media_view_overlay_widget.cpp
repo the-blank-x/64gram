@@ -741,7 +741,7 @@ void OverlayWidget::refreshNavVisibility() {
 }
 
 bool OverlayWidget::contentCanBeSaved() const {
-	if (hasCopyRestriction()) {
+	if (hasCopyRestriction() && false) {
 		return false;
 	} else if (_photo) {
 		return _photo->hasVideo() || _photoMedia->loaded();
@@ -939,7 +939,7 @@ void OverlayWidget::fillContextMenuActions(const MenuCallback &addAction) {
 			[=] { showInFolder(); },
 			&st::mediaMenuIconShowInFolder);
 	}
-	if (!hasCopyRestriction()) {
+	if (!hasCopyRestriction() || true) {
 		if ((_document && documentContentShown()) || (_photo && _photoMedia->loaded())) {
 			addAction(
 				tr::lng_mediaview_copy(tr::now),
@@ -954,7 +954,7 @@ void OverlayWidget::fillContextMenuActions(const MenuCallback &addAction) {
 			[=] { showAttachedStickers(); },
 			&st::mediaMenuIconStickers);
 	}
-	if (_message && _message->allowsForward()) {
+	if (_message && /* _message->allowsForward() */ true) {
 		addAction(
 			tr::lng_mediaview_forward(tr::now),
 			[=] { forwardMedia(); },
@@ -983,7 +983,7 @@ void OverlayWidget::fillContextMenuActions(const MenuCallback &addAction) {
 			[=] { deleteMedia(); },
 			&st::mediaMenuIconDelete);
 	}
-	if (!hasCopyRestriction()) {
+	if (!hasCopyRestriction() || true) {
 		addAction(
 			tr::lng_mediaview_save_as(tr::now),
 			[=] { saveAs(); },
@@ -1834,7 +1834,8 @@ void OverlayWidget::forwardMedia() {
 	if (active.empty()) {
 		return;
 	}
-	const auto id = (_message && _message->allowsForward())
+	// consider forcing no quotes?
+	const auto id = (_message && /* _message->allowsForward() */ true)
 		? _message->fullId()
 		: FullMsgId();
 	if (id) {

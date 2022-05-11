@@ -456,7 +456,7 @@ ListItemSelectionData Provider::computeSelectionData(
 		TextSelection selection) {
 	auto result = ListItemSelectionData(selection);
 	result.canDelete = true;
-	result.canForward = item->allowsForward()
+	result.canForward = /* item->allowsForward() */ true
 		&& (&item->history()->session() == &_controller->session());
 	return result;
 }

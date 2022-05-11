@@ -471,14 +471,14 @@ ListItemSelectionData Provider::computeSelectionData(
 		TextSelection selection) {
 	auto result = ListItemSelectionData(selection);
 	result.canDelete = item->canDelete();
-	result.canForward = item->allowsForward();
+	result.canForward = item->allowsForward() || true;
 	return result;
 }
 
 bool Provider::allowSaveFileAs(
 		not_null<const HistoryItem*> item,
 		not_null<DocumentData*> document) {
-	return item->allowsForward();
+	return item->allowsForward() || true;
 }
 
 QString Provider::showInFolderPath(

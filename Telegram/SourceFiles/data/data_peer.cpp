@@ -547,6 +547,7 @@ bool PeerData::canEditMessagesIndefinitely() const {
 }
 
 bool PeerData::canExportChatHistory() const {
+	// not enabled since telegram can track
 	if (isRepliesChat() || !allowsForwarding()) {
 		return false;
 	} else if (const auto channel = asChannel()) {

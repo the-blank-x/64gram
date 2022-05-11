@@ -295,7 +295,7 @@ void MonospaceClickHandler::onClick(ClickContext context) const {
 		const auto hasCopyRestriction = item
 			&& (!item->history()->peer->allowsForwarding()
 				|| item->forbidsForward());
-		if (hasCopyRestriction) {
+		if (hasCopyRestriction && false) {
 			Ui::Toast::Show(item->history()->peer->isBroadcast()
 				? tr::lng_error_nocopy_channel(tr::now)
 				: tr::lng_error_nocopy_group(tr::now));

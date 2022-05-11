@@ -520,7 +520,7 @@ bool TopBar::computeCanDelete() const {
 }
 
 bool TopBar::computeCanForward() const {
-	return ranges::all_of(_selectedItems.list, &SelectedItem::canForward);
+	return ranges::all_of(_selectedItems.list, &SelectedItem::canForward) || true;
 }
 
 Ui::StringWithNumbers TopBar::generateSelectedText() const {
